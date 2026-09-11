@@ -7,7 +7,7 @@ import { inspect } from 'util';
 import bytes from 'bytes';
 import { useContainer } from 'class-validator';
 import session from 'express-session';
-import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
+//import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 import { ApiPath } from 'twenty-shared/types';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
@@ -32,6 +32,10 @@ import { generateFrontConfig } from './utils/generate-front-config';
 const bootstrap = async () => {
   enableValidationMetadataCache();
   setPgDateTypeParser();
+
+  const { default: graphqlUploadExpress } = await import(
+    'graphql-upload/graphqlUploadExpress.mjs'
+  );
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
