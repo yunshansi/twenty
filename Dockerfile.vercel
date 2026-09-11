@@ -1,0 +1,48 @@
+# syntax=docker/dockerfile:1
+
+FROM node:24.5.0-bookworm-slim AS build
+
+WORKDIR /app
+
+ENV COREPACK_HOME=/corepack
+
+# Enable Corepack
+RUN corepack enable
+
+# Copy the complete repository
+COPY . .
+
+# Install exactly according to yarn.lock
+RUN yarn install --immutable
+
+# Build Twenty Server
+RUN yarn nx build twenty-server
+
+
+# --------------------------------------------------
+# Production image
+# --------------------------------------------------
+
+FROM node:24.5.0-bookworm-slim AS production
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+# Runtime dependencies
+COPY --from=build /app/node_modules ./node_modules
+
+# Yarn/runtime files
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/yarn.lock ./yarn.lock
+COPY --from=build /app/.yarnrc.yml ./.yarnrc.yml
+
+# Yarn 4.13.0
+COPY --from=build /app/.yarn ./.yarn
+
+# Twenty server build
+COPY --from=build /app/packages/twenty-server/dist ./packages/twenty-server/dist
+
+EXPOSE 3000
+
+CMD ["node", "packages/twenty-server/dist/main.js"]
