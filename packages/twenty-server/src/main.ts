@@ -1,13 +1,3 @@
-import path from 'path';
-import { register } from 'tsconfig-paths';
-
-register({
-  baseUrl: path.resolve(__dirname, '..'),
-  paths: {
-    'src/*': ['src/*'],
-  },
-});
-
 import { NestFactory } from '@nestjs/core';
 import { type NestExpressApplication } from '@nestjs/platform-express';
 
