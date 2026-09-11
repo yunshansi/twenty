@@ -3,3 +3,11 @@
 **/node_modules
 .nx/cache
 packages/twenty-server/.env
+
+.github
+node_modules
+**/build
+**/dist
+coverage
+.tmp
+*.log
